@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="misbah.naseer.mobilestore.ui.LandingActivity">
+
+    <ImageView
+        android:id="@+id/image_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/splash_backgroundo" />
+
+    <misbah.naseer.mobilestore.helper.MSEditText
+        android:id="@+id/user_id_et"
+        android:layout_centerInParent="true"
+        style="@style/msEditText"/>
+
+    <misbah.naseer.mobilestore.helper.MSEditText
+        android:id="@+id/password_et"
+        android:layout_below="@+id/user_id_et"
+        android:layout_marginTop="20dp"
+        style="@style/msEditText" />
+    <misbah.naseer.mobilestore.helper.MSButton
+        android:id="@+id/sign_in_button"
+        android:layout_below="@+id/password_et"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginTop="20dp"
+        style="@style/msButton"
+        android:text="Sign In"/>
+    <misbah.naseer.mobilestore.helper.MSButton
+        android:id="@+id/sign_in_google_button"
+        android:layout_below="@+id/sign_in_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginTop="20dp"
+        style="@style/msButtonRed"
+        android:drawableRight="@mipmap/google_plus_icon"
+        android:text="Sign In using google"/>
+
+</RelativeLayout>

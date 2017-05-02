@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "939768971757",
+    "firebase_url": "https://mobilestore-f02a5.firebaseio.com",
+    "project_id": "mobilestore-f02a5",
+    "storage_bucket": "mobilestore-f02a5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:939768971757:android:886d9fa7551f3706",
+        "android_client_info": {
+          "package_name": "misbah.naseer.mobilestore"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "939768971757-sj7ttd9l5qmq03oido714nnimdl76cfs.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "misbah.naseer.mobilestore",
+            "certificate_hash": "ef083dca0e351c92d1a258a17aed8c45083b382f"
+          }
+        },
+        {
+          "client_id": "939768971757-jucpevjnuklbbeka64irbif2h0b7f5ld.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAjZTmcTQ0nw15eAcWVDdNthCQOSC3kCrg"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "939768971757-jucpevjnuklbbeka64irbif2h0b7f5ld.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

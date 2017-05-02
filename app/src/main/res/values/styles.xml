@@ -1,0 +1,99 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="NoActionBarTheme" parent="Theme.AppCompat.NoActionBar"/>
+
+    <style name="MyCustomTheme" parent="Base.Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <!-- <item name="android:actionBarStyle">@style/MyActionBarTheme</item>
+         <item name="android:windowDisablePreview">true</item>-->
+    </style>
+
+    <style name="msButton">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/activity_main_button_layout_height</item>
+        <item name="android:textSize">@dimen/activity_main_button_textsize</item>
+        <item name="android:layout_centerHorizontal">true</item>
+        <item name="android:textColor">@color/WHITE</item>
+        <item name="android:gravity">left|center</item>
+        <item name="android:layout_marginLeft">@dimen/margin_left_all_landing</item>
+        <item name="android:layout_marginRight">@dimen/margin_left_all_landing</item>
+        <item name="android:background">@drawable/ms_button_blue</item>
+    </style>
+
+    <style name="msButtonRed">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">50dp</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:layout_centerHorizontal">true</item>
+        <item name="android:textColor">@color/WHITE</item>
+        <item name="android:gravity">left|center</item>
+        <item name="android:layout_marginLeft">@dimen/margin_left_all_landing</item>
+        <item name="android:layout_marginRight">@dimen/margin_left_all_landing</item>
+        <item name="android:background">@drawable/ms_button_red</item>
+    </style>
+
+    <style name="msButtonGreen">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">50dp</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:layout_centerHorizontal">true</item>
+        <item name="android:textColor">@color/WHITE</item>
+        <item name="android:gravity">left|center</item>
+        <item name="android:layout_marginLeft">@dimen/margin_left_all_landing</item>
+        <item name="android:layout_marginRight">@dimen/margin_left_all_landing</item>
+        <item name="android:background">@drawable/ms_button_green</item>
+    </style>
+
+    <style name="msEditText">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/height_edit_text</item>
+        <item name="android:textSize">@dimen/title_textsize_home_fragment_layout</item>
+        <item name="android:layout_centerHorizontal">true</item>
+        <item name="android:textColor">@color/BLACK</item>
+        <item name="android:gravity">left|center</item>
+        <item name="android:paddingLeft">@dimen/padding_left_all_landing</item>
+        <item name="android:layout_marginLeft">@dimen/margin_left_all_landing</item>
+        <item name="android:layout_marginRight">@dimen/margin_left_all_landing</item>
+        <item name="android:background">@drawable/ms_field_green</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
+    <style name="dialogButton">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/activity_main_button_textsize</item>
+        <item name="android:layout_centerHorizontal">true</item>
+        <item name="android:textColor">@color/WHITE</item>
+        <item name="android:gravity">left|center</item>
+        <item name="android:layout_marginBottom">10dp</item>
+        <item name="android:layout_marginLeft">10dp</item>
+        <item name="android:layout_marginRight">10dp</item>
+        <item name="android:background">@drawable/ms_button_green</item>
+    </style>
+
+    <style name="dialogEditText">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/title_textsize_home_fragment_layout</item>
+        <item name="android:layout_centerHorizontal">true</item>
+        <item name="android:textColor">@color/BLACK</item>
+        <item name="android:gravity">left|center</item>
+        <item name="android:background">@drawable/ms_field_green</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:layout_margin">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:paddingTop">10dp</item>
+    </style>
+
+</resources>
