@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">MobileStore</string>
+    <string name="firstName">First Name</string>
+    <string name="lastName">Last Name</string>
+    <string name="email">Email</string>
+    <string name="confirmPassword">Confirm Password</string>
+    <string name="mobileNo">Mobile Number</string>
+    <string name="password">Password</string>
+    <string name="title_activity_maps">Map</string>
 </resources>

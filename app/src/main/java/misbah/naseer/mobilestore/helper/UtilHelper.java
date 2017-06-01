@@ -2,6 +2,7 @@ package misbah.naseer.mobilestore.helper;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -24,10 +25,14 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import misbah.naseer.mobilestore.R;
+import misbah.naseer.mobilestore.interfaces.AlertDialogCallback;
+import misbah.naseer.mobilestore.model.UserInformationModel;
 
 /**
  * Created by Devprovider on 28/04/2017.
@@ -35,13 +40,12 @@ import misbah.naseer.mobilestore.R;
 
 public class UtilHelper {
 
-    private static Context context;
+    private static Context staticContext;
+    private static ProgressDialog waitDialog;
 
     public static void setContext(Context mcontext){
-        context = mcontext;
+        staticContext = mcontext;
     }
-
-
 
     public static void GoToActivityAsNewTask(Activity context,Class cls, int enterTransition, int exitTransition) {
         Intent intent = new Intent(context, cls);
@@ -86,20 +90,79 @@ public class UtilHelper {
         dialog.show();
     }
 
-    private static final String USER_SESSION_KEY = "user_session_key";
-    public static void createLoginSession(Context context, String userInfo){
-        PreferenceManager.getDefaultSharedPreferences(context).edit().putString(USER_SESSION_KEY, userInfo).apply();
+    public static void showAlertDialog(Context context, @Nullable String title, @Nullable String message,
+                                       String buttonText, final AlertDialogCallback callback) {
+        AlertDialog dialog = new AlertDialog.Builder(context).setTitle(title)
+                .setMessage("" + message).setCancelable(true)
+                .setPositiveButton(buttonText, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        callback.onClick();
+                    }
+                }).create();
+        dialog.show();
     }
 
-    public static boolean isUserLoggedIn(Context context){
-        String userInfo = PreferenceManager.getDefaultSharedPreferences(context).getString(USER_SESSION_KEY, null);
+    public static void showWaitDialog(Context context,@Nullable  String title,@Nullable  String message) {
+        try {
+            if (waitDialog != null) {
+                if (!waitDialog.isShowing()) {
+                    waitDialog = new ProgressDialog(context);
+                    waitDialog.setTitle(title);
+                    waitDialog.setMessage(message);
+                    waitDialog.setIndeterminate(true);
+                    waitDialog.setCancelable(false);
+                    waitDialog.show();
+                }
+            } else {
+                waitDialog = new ProgressDialog(context);
+                waitDialog.setTitle(title);
+                waitDialog.setMessage(message);
+                waitDialog.setIndeterminate(true);
+                waitDialog.setCancelable(false);
+                waitDialog.show();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void dismissWaitDialog() {
+        try {
+            if (waitDialog != null && waitDialog.isShowing()) {
+                waitDialog.dismiss();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        }
+    }
+
+    private static final String USER_INFO_KEY = "user_info_key";
+
+    public static void createLoginSession(Context context, UserInformationModel userInfo) {
+        staticContext = context;
+        String json = new Gson().toJson(userInfo);
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putString(USER_INFO_KEY, json).apply();
+    }
+
+    public static boolean isUserLoggedIn(Context context) {
+        staticContext = context;
+        String userInfo = PreferenceManager.getDefaultSharedPreferences(context).getString(USER_INFO_KEY, null);
         return userInfo != null;
     }
 
-    public static void endLoginSession(Context context){
-        PreferenceManager.getDefaultSharedPreferences(context).edit().clear().apply();
+    @Nullable
+    public static UserInformationModel getLoggedInUser(){
+        String userInfo = PreferenceManager.getDefaultSharedPreferences(staticContext).getString(USER_INFO_KEY, null);
+        if (userInfo == null)
+            return null;
+        return new Gson().fromJson(userInfo, UserInformationModel.class);
     }
 
+    public static void endLoginSession(Context context) {
+        PreferenceManager.getDefaultSharedPreferences(context).edit().clear().apply();
+    }
     public static void hideKeyboardFrom(Context context, View view) {
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
@@ -117,6 +180,6 @@ public class UtilHelper {
     }
 
     public static Typeface getFont() {
-        return Typeface.createFromAsset(context.getAssets(), "fonts/RobotoRegular.ttf");
+        return Typeface.createFromAsset(staticContext.getAssets(), "fonts/RobotoRegular.ttf");
     }
 }

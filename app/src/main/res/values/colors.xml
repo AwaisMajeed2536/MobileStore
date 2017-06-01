@@ -6,7 +6,7 @@
     <color name="PRIMARY_BLUE_COLOUR">#0018a8</color>
     <color name="MID_BLUE_COLOUR">#b2b9e4</color>
     <color name="LIGHT_BLUE_COLOUR">#ccd0ed</color>
-    <color name="GREEN_COLOUR">#aa6bff3e</color>
+    <color name="GREEN_COLOUR_TRANSPARENT">#eddaffce</color>
     <color name="GREEN_COLOUR_BUTTON">#127122</color>
     <color name="WHITE">#fff</color>
     <color name="BLACK">#000</color>

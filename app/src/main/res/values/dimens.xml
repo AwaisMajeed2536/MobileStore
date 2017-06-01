@@ -10,5 +10,7 @@
     <dimen name="margin_left_all_landing">30dp</dimen>
     <dimen name="padding_left_all_landing">16dp</dimen>
     <dimen name="height_edit_text">50dp</dimen>
+    <dimen name="margin_all_signup">10dp</dimen>
+    <dimen name="activity_main_roundbutton_textsize">16sp</dimen>
 
 </resources>
