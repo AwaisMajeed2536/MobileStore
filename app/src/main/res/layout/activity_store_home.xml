@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/place_order_btn"
+        style="@style/msButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:text="Place Order" />
+
+    <TextView
+        android:id="@+id/or_textview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/place_order_btn"
+        android:layout_marginTop="3dp"
+        android:gravity="center"
+        android:text="OR"
+        android:textSize="12sp" />
+
+    <Button
+        android:id="@+id/track_orders_btn"
+        style="@style/msButtonGreen"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/or_textview"
+        android:layout_marginTop="3dp"
+        android:gravity="center"
+        android:text="Track Orders"
+        android:textColor="@color/WHITE" />
+
+</RelativeLayout>

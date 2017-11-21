@@ -17,4 +17,6 @@
     <color name="club_list_background">#CCD0ED</color>
     <color name="transparent">@android:color/transparent</color>
     <color name="White">#fff</color>
+    <color name="black">#000000</color>
+    <color name="blueShade">#0000ff</color>
 </resources>

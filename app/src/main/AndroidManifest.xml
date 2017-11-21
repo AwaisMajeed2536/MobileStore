@@ -25,21 +25,31 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.SignupActivity" />
-        <!--
-             The API key for Google Maps-based APIs is defined as a string resource.
-             (See the file "res/values/google_maps_api.xml").
-             Note that the API key is linked to the encryption key used to sign the APK.
-             You need a different API key for each encryption key, including the release key that is used to
-             sign the APK for publishing.
-             You can define the keys for the debug and release targets in src/debug/ and src/release/. 
-        -->
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-        <activity
-            android:name=".ui.HomeActivity"
-            android:label="@string/title_activity_maps"></activity>
+        <activity android:name=".ui.DistributorHomeActivity" />
+        <activity android:name=".ui.StoreHomeActivity" />
+        <activity android:name=".ui.AdminHomeActivity" />
+        <activity android:name=".ui.NotificationHandlerActivity" />
+        <activity android:name=".ui.MessagingActivity" />
+        <activity android:name=".ui.OrderTrackingActivity"/>
+        <activity android:name=".ui.PlaceOrderActivity"/>
+
+        <service
+            android:name=".services.MessageSnifferService"
+            android:exported="false" />
+
+        <receiver
+            android:name=".services.MessageReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="action.mobilestore.message" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

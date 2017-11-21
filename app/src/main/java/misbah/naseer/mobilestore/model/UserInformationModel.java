@@ -6,7 +6,7 @@ package misbah.naseer.mobilestore.model;
 
 public class UserInformationModel {
     private String userId;
-    private String UserName;
+    private String userName;
     private String contact;
     private String email;
     private String password;
@@ -17,7 +17,7 @@ public class UserInformationModel {
 
     public UserInformationModel(String userId, String userName, String contact, String email, String password, String userType) {
         this.userId = userId;
-        UserName = userName;
+        this.userName = userName;
         this.contact = contact;
         this.email = email;
         this.password = password;
@@ -33,11 +33,11 @@ public class UserInformationModel {
     }
 
     public String getUserName() {
-        return UserName;
+        return userName;
     }
 
     public void setUserName(String userName) {
-        UserName = userName;
+        this.userName = userName;
     }
 
     public String getContact() {

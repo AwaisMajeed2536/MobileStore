@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
@@ -20,11 +22,18 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.HashMap;
+
 import misbah.naseer.mobilestore.R;
+import misbah.naseer.mobilestore.helper.Constants;
 import misbah.naseer.mobilestore.helper.MSButton;
 import misbah.naseer.mobilestore.helper.MSEditText;
 import misbah.naseer.mobilestore.helper.UtilHelper;
 import misbah.naseer.mobilestore.model.UserInformationModel;
+
+import static misbah.naseer.mobilestore.helper.Constants.USER_TYPE_ADMIN;
+import static misbah.naseer.mobilestore.helper.Constants.USER_TYPE_DISTRIBUTOR;
+import static misbah.naseer.mobilestore.helper.Constants.USER_TYPE_STORE;
 
 public class LandingActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
     public static final String TAG = "LANDING_ACTIVITY";
@@ -32,10 +41,10 @@ public class LandingActivity extends AppCompatActivity implements GoogleApiClien
     private static final int RC_SIGN_IN = 647;
     GoogleSignInOptions gso;
     GoogleApiClient mGoogleApiClient;
-    private MSEditText emailET;
-    private MSEditText passwordET;
-    private MSButton signInButton;
-    private MSButton signUpButton;
+    private EditText emailET;
+    private EditText passwordET;
+    private Button signInButton;
+    private Button signUpButton;
     private DatabaseReference signinRef;
 
     @Override
@@ -44,7 +53,7 @@ public class LandingActivity extends AppCompatActivity implements GoogleApiClien
         setContentView(R.layout.activity_landing);
         initView();
         if(UtilHelper.isUserLoggedIn(this)){
-            startActivity(new Intent(this, HomeActivity.class));
+            login();
         }
 //        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
 //                .requestEmail()
@@ -58,6 +67,23 @@ public class LandingActivity extends AppCompatActivity implements GoogleApiClien
         //MSButton signInButton = (MSButton) findViewById(R.id.sign_in_google_button);
 
         //signInButton.setOnClickListener(this);
+    }
+
+    private void login() {
+        UserInformationModel model = UtilHelper.getLoggedInUser(this);
+        if(model == null){
+            return;
+        }
+        Intent intent = null;
+        if (model.getUserType().equalsIgnoreCase(USER_TYPE_ADMIN)) {
+            intent = new Intent(LandingActivity.this, AdminHomeActivity.class);
+        } else if (model.getUserType().equalsIgnoreCase(USER_TYPE_DISTRIBUTOR)) {
+            intent = new Intent(LandingActivity.this, DistributorHomeActivity.class);
+        } else if (model.getUserType().equalsIgnoreCase(USER_TYPE_STORE)) {
+            intent = new Intent(LandingActivity.this, StoreHomeActivity.class);
+        }
+        if (intent != null)
+            startActivity(intent);
     }
 
     @Override
@@ -99,12 +125,12 @@ public class LandingActivity extends AppCompatActivity implements GoogleApiClien
     }
 
     private void initView() {
-        signInButton = (MSButton) findViewById(R.id.sign_in_button);
+        signInButton = (Button) findViewById(R.id.sign_in_button);
         signInButton.setOnClickListener(this);
-        signUpButton = (MSButton) findViewById(R.id.sign_up_button);
+        signUpButton = (Button) findViewById(R.id.sign_up_button);
         signUpButton.setOnClickListener(this);
-        emailET = (MSEditText) findViewById(R.id.email_et);
-        passwordET = (MSEditText) findViewById(R.id.password_et);
+        emailET = (EditText) findViewById(R.id.email_et);
+        passwordET = (EditText) findViewById(R.id.password_et);
     }
 
     @Override
@@ -125,10 +151,14 @@ public class LandingActivity extends AppCompatActivity implements GoogleApiClien
                             if(dataSnapshot.getValue() == null){
                                 UtilHelper.showAlertDialog(LandingActivity.this, "Login Failed!", "Invalid email or password...");
                             } else{
-                                UserInformationModel userInfo = dataSnapshot.getValue(UserInformationModel.class);
+                                HashMap<String, String> userData = (HashMap<String, String>) dataSnapshot.getValue();
+                                userData.put(Constants.USER_ID, dataSnapshot.getKey());
+                                UserInformationModel userInfo = new UserInformationModel(userData.get(Constants.USER_ID),
+                                        userData.get(Constants.USER_NAME), userData.get(Constants.CONTACT), userData.get(Constants.EMAIL),
+                                        String.valueOf(userData.get(Constants.PASSWORD)), userData.get(Constants.USER_TYPE));
                                 UtilHelper.createLoginSession(LandingActivity.this, userInfo);
                                 if(userInfo.getPassword().equals(passwordET.getText().toString())){
-                                    startActivity(new Intent(LandingActivity.this, HomeActivity.class));
+                                    login();
                                 } else{
                                     UtilHelper.showAlertDialog(LandingActivity.this, "Login Failed!", "Invalid email or password...");
                                 }

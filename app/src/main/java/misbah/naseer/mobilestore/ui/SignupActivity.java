@@ -2,6 +2,7 @@ package misbah.naseer.mobilestore.ui;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
@@ -22,8 +23,14 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.HashMap;
 
 import misbah.naseer.mobilestore.R;
-import misbah.naseer.mobilestore.helper.MSEditText;
+import misbah.naseer.mobilestore.helper.Constants;
 import misbah.naseer.mobilestore.helper.UtilHelper;
+import okhttp3.internal.Util;
+
+import static misbah.naseer.mobilestore.helper.Constants.CONTACT;
+import static misbah.naseer.mobilestore.helper.Constants.USER_TYPE_ADMIN;
+import static misbah.naseer.mobilestore.helper.Constants.USER_TYPE_DISTRIBUTOR;
+import static misbah.naseer.mobilestore.helper.Constants.USER_TYPE_STORE;
 
 public class SignupActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -38,7 +45,9 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
     protected Button signupButton;
     protected RelativeLayout mailLayout;
     private HashMap<String, String> userInfo = new HashMap<>();
-    DatabaseReference signUpRef;
+    DatabaseReference signUpRefAccountData;
+    DatabaseReference signUpRefUserLocations;
+    DatabaseReference signUpRefMessages;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,17 +62,39 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         if (view.getId() == R.id.account_type_tv) {
             showClearancePortSelectionDialog();
         } else if (view.getId() == R.id.signup_button) {
-            if(checkInput()){
+            if (checkInput()) {
                 UtilHelper.showWaitDialog(this, "Creating Account", "please wait...");
-                signUpRef = FirebaseDatabase.getInstance().getReferenceFromUrl
+                signUpRefAccountData = FirebaseDatabase.getInstance().getReferenceFromUrl
                         ("https://mobilestore-f02a5.firebaseio.com/UserAccounts/");
-                signUpRef.child(userInfo.remove("userId")).setValue(userInfo).addOnCompleteListener(
+                signUpRefUserLocations = FirebaseDatabase.getInstance()
+                        .getReferenceFromUrl("https://mobilestore-f02a5.firebaseio.com/userLocations");
+                signUpRefMessages = FirebaseDatabase.getInstance()
+                        .getReferenceFromUrl("https://mobilestore-f02a5.firebaseio.com/userMessages");
+                String userId = userInfo.remove(Constants.USER_ID);
+
+                //setting a node in locations data
+                Location location = UtilHelper.getLastKnownLocation(this);
+                HashMap<String, String> locationRefData = new HashMap<>();
+                locationRefData.put(Constants.LAT_KEY, String.valueOf(location.getLatitude()));
+                locationRefData.put(Constants.LONG_KEY, String.valueOf(location.getLongitude()));
+                signUpRefUserLocations.child(userId).setValue(locationRefData);
+
+                //setting a node in messages data
+                HashMap<String, String> messagesRefData = new HashMap<>();
+                messagesRefData.put(Constants.MESSAGE_FROM, "nill");
+                messagesRefData.put(Constants.MESSAGE_BODY, "nill");
+                messagesRefData.put(Constants.MESSAGE_LOCATION, "nill");
+                messagesRefData.put(Constants.MESSAGE_DATE, "nill");
+                signUpRefMessages.child(userId).child("0").setValue(messagesRefData);
+
+                //setting user account data
+                signUpRefAccountData.child(userId).setValue(userInfo).addOnCompleteListener(
                         new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 UtilHelper.dismissWaitDialog();
                                 Toast.makeText(SignupActivity.this, "Signup Successful", Toast.LENGTH_SHORT).show();
-                                startActivity(new Intent(SignupActivity.this, HomeActivity.class));
+                                moveForward(userInfo.get(Constants.USER_TYPE));
                                 overridePendingTransition(R.anim.hold_activity, R.anim.enter_activity);
                                 finish();
                             }
@@ -73,51 +104,64 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
+    private void moveForward(String userType) {
+        Intent intent = null;
+        if (userType.equalsIgnoreCase(USER_TYPE_ADMIN)) {
+            intent = new Intent(this, AdminHomeActivity.class);
+        } else if (userType.equalsIgnoreCase(USER_TYPE_DISTRIBUTOR)) {
+            intent = new Intent(this, DistributorHomeActivity.class);
+        } else if (userType.equalsIgnoreCase(USER_TYPE_STORE)) {
+            intent = new Intent(this, StoreHomeActivity.class);
+        }
+        if (intent != null)
+            startActivity(intent);
+    }
+
     private boolean checkInput() {
-        if(TextUtils.isEmpty(accountTypeTv.getText())){
+        if (TextUtils.isEmpty(accountTypeTv.getText())) {
             accountTypeTv.setHint("Select user type");
-            mailLayout.scrollTo(0,0);
+            mailLayout.scrollTo(0, 0);
             return false;
-        } else if(TextUtils.isEmpty(userIdTv.getText())){
+        } else if (TextUtils.isEmpty(userIdTv.getText())) {
             userIdTv.setError("Field is required");
             userIdTv.requestFocus();
             return false;
-        } else if(TextUtils.isEmpty(firstName.getText())){
+        } else if (TextUtils.isEmpty(firstName.getText())) {
             firstName.setError("Field is required");
             firstName.requestFocus();
             return false;
-        } else if(TextUtils.isEmpty(lastName.getText())){
+        } else if (TextUtils.isEmpty(lastName.getText())) {
             lastName.setError("Field is required");
             lastName.requestFocus();
             return false;
-        } else if(TextUtils.isEmpty(email.getText())){
+        } else if (TextUtils.isEmpty(email.getText())) {
             email.setError("Field is required");
             email.requestFocus();
             return false;
-        } else if(TextUtils.isEmpty(password.getText())){
+        } else if (TextUtils.isEmpty(password.getText())) {
             password.setError("Field is required");
             password.requestFocus();
             return false;
-        } else if(TextUtils.isEmpty(confirmPassword.getText())){
+        } else if (TextUtils.isEmpty(confirmPassword.getText())) {
             confirmPassword.setError("Field is required");
             confirmPassword.requestFocus();
             return false;
-        } else if(TextUtils.isEmpty(mobileNumber.getText())){
+        } else if (TextUtils.isEmpty(mobileNumber.getText())) {
             mobileNumber.setError("Field is required");
             mobileNumber.requestFocus();
             return false;
         }
-        userInfo.put("userType",accountTypeTv.getText().toString());
-        userInfo.put("userId",userIdTv.getText().toString());
-        userInfo.put("userName",firstName.getText().toString() + " " + lastName.getText().toString());
-        userInfo.put("email",email.getText().toString());
-        userInfo.put("password",password.getText().toString());
-        userInfo.put("contact",mobileNumber.getText().toString());
+        userInfo.put(Constants.USER_TYPE, accountTypeTv.getText().toString());
+        userInfo.put(Constants.USER_ID, userIdTv.getText().toString());
+        userInfo.put(Constants.USER_NAME, firstName.getText().toString() + " " + lastName.getText().toString());
+        userInfo.put(Constants.EMAIL, email.getText().toString());
+        userInfo.put(Constants.PASSWORD, password.getText().toString());
+        userInfo.put(Constants.CONTACT, mobileNumber.getText().toString());
         return true;
     }
 
     private void showClearancePortSelectionDialog() {
-        String[] portNames = {"Admin","Distributer", "Store"};
+        String[] portNames = {"Admin", "Distributor", "Store"};
         int checkedPort = -1;
         String checkedPortName = accountTypeTv.getText().toString();
         for (int i = 0; i < portNames.length; i++) {

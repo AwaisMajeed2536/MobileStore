@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    tools:context="misbah.naseer.mobilestore.ui.StoreHomeActivity">
+
+
+    <TextView
+        android:id="@+id/order_tv"
+        style="@style/msEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:text="List Down The Order Items..."
+        android:textSize="20sp" />
+
+    <EditText
+        android:id="@+id/order_et"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/order_tv"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/GREEN_COLOUR_TRANSPARENT"
+        android:gravity="top"
+        android:hint="Items..."
+        android:lines="10"
+        android:padding="16dp" />
+
+    <Button
+        android:id="@+id/order_button"
+        style="@style/msButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/order_et"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:text="Place Order" />
+
+</RelativeLayout>
