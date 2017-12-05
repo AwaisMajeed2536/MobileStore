@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -54,9 +55,12 @@ public class OrderTrackingActivity extends AppCompatActivity implements AdapterV
     }
 
     private void setAdapter(List<HashMap<String, String>> dataList) {
-        adapter = new OrderTrackingAdapter(this, dataList);
-        ordersLv.setAdapter(adapter);
-        ordersLv.setOnItemClickListener(this);
+        if (dataList!=null) {
+            adapter = new OrderTrackingAdapter(this, dataList);
+            ordersLv.setAdapter(adapter);
+            ordersLv.setOnItemClickListener(this);
+        }else
+            Toast.makeText(this, "No Orders to show!", Toast.LENGTH_SHORT).show();
     }
 
     @Override

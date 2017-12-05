@@ -25,9 +25,8 @@ import java.util.HashMap;
 import misbah.naseer.mobilestore.R;
 import misbah.naseer.mobilestore.helper.Constants;
 import misbah.naseer.mobilestore.helper.UtilHelper;
-import okhttp3.internal.Util;
+import misbah.naseer.mobilestore.model.UserInformationModel;
 
-import static misbah.naseer.mobilestore.helper.Constants.CONTACT;
 import static misbah.naseer.mobilestore.helper.Constants.USER_TYPE_ADMIN;
 import static misbah.naseer.mobilestore.helper.Constants.USER_TYPE_DISTRIBUTOR;
 import static misbah.naseer.mobilestore.helper.Constants.USER_TYPE_STORE;
@@ -48,6 +47,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
     DatabaseReference signUpRefAccountData;
     DatabaseReference signUpRefUserLocations;
     DatabaseReference signUpRefMessages;
+    UserInformationModel userInfoData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +60,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.account_type_tv) {
-            showClearancePortSelectionDialog();
+            showUserTypeChoiceDialog();
         } else if (view.getId() == R.id.signup_button) {
             if (checkInput()) {
                 UtilHelper.showWaitDialog(this, "Creating Account", "please wait...");
@@ -113,8 +113,10 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         } else if (userType.equalsIgnoreCase(USER_TYPE_STORE)) {
             intent = new Intent(this, StoreHomeActivity.class);
         }
-        if (intent != null)
+        if (intent != null) {
+            UtilHelper.createLoginSession(this, userInfoData);
             startActivity(intent);
+        }
     }
 
     private boolean checkInput() {
@@ -151,16 +153,26 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
             mobileNumber.requestFocus();
             return false;
         }
-        userInfo.put(Constants.USER_TYPE, accountTypeTv.getText().toString());
-        userInfo.put(Constants.USER_ID, userIdTv.getText().toString());
-        userInfo.put(Constants.USER_NAME, firstName.getText().toString() + " " + lastName.getText().toString());
-        userInfo.put(Constants.EMAIL, email.getText().toString());
-        userInfo.put(Constants.PASSWORD, password.getText().toString());
-        userInfo.put(Constants.CONTACT, mobileNumber.getText().toString());
+        String accoutType = accountTypeTv.getText().toString();
+        String userID = userIdTv.getText().toString();
+        String fName = firstName.getText().toString();
+        String lName = lastName.getText().toString();
+        String emailValue = email.getText().toString();
+        String passwordValue = password.getText().toString();
+        String mobileNumberValue = mobileNumber.getText().toString();
+        userInfo.put(Constants.USER_TYPE, accoutType);
+        userInfo.put(Constants.USER_ID, userID);
+        userInfo.put(Constants.USER_NAME, fName + " " + lName);
+        userInfo.put(Constants.EMAIL, emailValue);
+        userInfo.put(Constants.PASSWORD, passwordValue);
+        userInfo.put(Constants.CONTACT, mobileNumberValue);
+        userInfoData = new UserInformationModel(userID,
+                fName + lName, mobileNumberValue, emailValue,
+                String.valueOf(passwordValue), accoutType);
         return true;
     }
 
-    private void showClearancePortSelectionDialog() {
+    private void showUserTypeChoiceDialog() {
         String[] portNames = {"Admin", "Distributor", "Store"};
         int checkedPort = -1;
         String checkedPortName = accountTypeTv.getText().toString();
