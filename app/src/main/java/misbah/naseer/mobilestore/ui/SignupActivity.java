@@ -4,10 +4,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.PatternMatcher;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -121,8 +123,8 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
 
     private boolean checkInput() {
         if (TextUtils.isEmpty(accountTypeTv.getText())) {
-            accountTypeTv.setHint("Select user type");
-            mailLayout.scrollTo(0, 0);
+            accountTypeTv.setError("Select user type");
+            mailLayout.requestFocus();
             return false;
         } else if (TextUtils.isEmpty(userIdTv.getText())) {
             userIdTv.setError("Field is required");
@@ -140,12 +142,20 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
             email.setError("Field is required");
             email.requestFocus();
             return false;
+        } else if (!Patterns.EMAIL_ADDRESS.matcher(email.getText()).matches()) {
+            email.setError("Invalid email address");
+            email.requestFocus();
+            return false;
         } else if (TextUtils.isEmpty(password.getText())) {
             password.setError("Field is required");
             password.requestFocus();
             return false;
         } else if (TextUtils.isEmpty(confirmPassword.getText())) {
             confirmPassword.setError("Field is required");
+            confirmPassword.requestFocus();
+            return false;
+        } else if (!password.getText().toString().equals(confirmPassword.getText().toString())) {
+            confirmPassword.setError("Passwords do not match");
             confirmPassword.requestFocus();
             return false;
         } else if (TextUtils.isEmpty(mobileNumber.getText())) {

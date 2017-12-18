@@ -6,6 +6,7 @@
 
     <LinearLayout
         android:layout_marginTop="20dp"
+        android:paddingBottom="16dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
@@ -94,6 +95,7 @@
                 android:layout_below="@+id/confirm_password"
                 android:layout_marginTop="@dimen/margin_all_signup"
                 android:hint="@string/mobileNo"
+                android:digits="0123456789"
                 android:inputType="number"
                 android:textSize="@dimen/activity_main_roundbutton_textsize" />
 

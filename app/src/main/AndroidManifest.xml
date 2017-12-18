@@ -50,6 +50,9 @@
                 <action android:name="action.mobilestore.message" />
             </intent-filter>
         </receiver>
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="33ed1688bf347aea5884b52dd72e95a9a2b6cf82" />
     </application>
 
 </manifest>
