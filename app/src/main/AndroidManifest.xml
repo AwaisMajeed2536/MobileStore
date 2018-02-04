@@ -37,10 +37,12 @@
         <activity android:name=".ui.MessagingActivity" />
         <activity android:name=".ui.OrderTrackingActivity"/>
         <activity android:name=".ui.PlaceOrderActivity"/>
+        <activity android:name=".ui.TimerServiceTestActivity" />
 
         <service
             android:name=".services.MessageSnifferService"
             android:exported="false" />
+        <service android:name=".services.TimerService" />
 
         <receiver
             android:name=".services.MessageReceiver"

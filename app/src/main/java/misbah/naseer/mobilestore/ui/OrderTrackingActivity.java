@@ -2,6 +2,8 @@ package misbah.naseer.mobilestore.ui;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.location.Location;
+import android.location.LocationListener;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -37,8 +39,12 @@ public class OrderTrackingActivity extends AppCompatActivity implements AdapterV
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order_tracking);
         ordersLv = (ListView) findViewById(R.id.orders_lv);
+        if (!getIntent().getBooleanExtra(Constants.CALLED_FROM_ADMIN_HOME, false))
         ordersRef = FirebaseDatabase.getInstance()
-                .getReferenceFromUrl("https://mobilestore-f02a5.firebaseio.com/userOrders/"+UtilHelper.getLoggedInUser(this).getUserId());
+                .getReferenceFromUrl("https://mobilestore-f02a5.firebaseio.com/userOrders/" + UtilHelper.getLoggedInUser(this).getUserId());
+        else
+            ordersRef = FirebaseDatabase.getInstance()
+                    .getReferenceFromUrl("https://mobilestore-f02a5.firebaseio.com/userOrders/s01");
         ordersRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -51,21 +57,21 @@ public class OrderTrackingActivity extends AppCompatActivity implements AdapterV
 
             }
         });
-
     }
 
     private void setAdapter(List<HashMap<String, String>> dataList) {
-        if (dataList!=null) {
+        if (dataList != null) {
             adapter = new OrderTrackingAdapter(this, dataList);
             ordersLv.setAdapter(adapter);
-            ordersLv.setOnItemClickListener(this);
-        }else
+            if (!getIntent().getBooleanExtra(Constants.CALLED_FROM_ADMIN_HOME, false))
+                ordersLv.setOnItemClickListener(this);
+        } else
             Toast.makeText(this, "No Orders to show!", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
-        if(dataList.get(position).get(Constants.ORDER_STATUS_KEY).equalsIgnoreCase(Constants.ORDER_DONE)){
+        if (dataList.get(position).get(Constants.ORDER_STATUS_KEY).equalsIgnoreCase(Constants.ORDER_DONE)) {
             UtilHelper.showMessage(this, "order already done...");
         } else {
             new AlertDialog.Builder(this).setTitle("Order Status").setMessage("Have you received this order?")

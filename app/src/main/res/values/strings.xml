@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">CarDistributor</string>
+    <string name="app_name">Product Distribution System</string>
     <string name="firstName">First Name</string>
     <string name="lastName">Last Name</string>
     <string name="email">Email</string>

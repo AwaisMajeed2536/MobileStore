@@ -1,5 +1,6 @@
 package misbah.naseer.mobilestore.ui;
 
+import android.app.IntentService;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.preference.PreferenceManager;
@@ -110,7 +111,7 @@ public class AdminHomeActivity extends AppCompatActivity implements OnMapReadyCa
             HashMap<String, String> value = entry.getValue();
             if (isDistributor(key)) {
                 driverMapData.put(key, userLocations.get(key));
-            } else if( key.startsWith("s")){
+            } else if( key.startsWith("s") || key.startsWith("S")){
                 storemapData.put(key,userLocations.get(key));
             }
         }
@@ -130,6 +131,10 @@ public class AdminHomeActivity extends AppCompatActivity implements OnMapReadyCa
         if (item.getItemId() == R.id.action_notification) {
             Intent intent = new Intent(this, MessagingActivity.class);
             intent.putExtra(Constants.MESSAGES_PASS_KEY, notificationData);
+            startActivity(intent);
+        } else if (item.getItemId() == R.id.action_track) {
+            Intent intent = new Intent(this, OrderTrackingActivity.class);
+            intent.putExtra(Constants.CALLED_FROM_ADMIN_HOME, true);
             startActivity(intent);
         } else if (item.getItemId() == R.id.action_sign_out) {
             UtilHelper.endLoginSession(this);
@@ -176,7 +181,7 @@ public class AdminHomeActivity extends AppCompatActivity implements OnMapReadyCa
     }
 
     private boolean isDistributor(String driver) {
-        return (driver.startsWith("d"));
+        return (driver.startsWith("d") || driver.startsWith("D"));
     }
 
     private void addDriverMarkers(HashMap<String, HashMap<String, String>> mapData) {
