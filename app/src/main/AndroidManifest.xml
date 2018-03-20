@@ -35,8 +35,8 @@
         <activity android:name=".ui.AdminHomeActivity" />
         <activity android:name=".ui.NotificationHandlerActivity" />
         <activity android:name=".ui.MessagingActivity" />
-        <activity android:name=".ui.OrderTrackingActivity"/>
-        <activity android:name=".ui.PlaceOrderActivity"/>
+        <activity android:name=".ui.OrderTrackingActivity" />
+        <activity android:name=".ui.PlaceOrderActivity" />
         <activity android:name=".ui.TimerServiceTestActivity" />
 
         <service
@@ -52,9 +52,13 @@
                 <action android:name="action.mobilestore.message" />
             </intent-filter>
         </receiver>
+
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="33ed1688bf347aea5884b52dd72e95a9a2b6cf82" />
+
+        <activity android:name=".ui.OrderTimesActivity" />
+        <activity android:name=".ui.AddRemoveItemsActivity"></activity>
     </application>
 
 </manifest>

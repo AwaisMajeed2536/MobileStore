@@ -37,6 +37,7 @@ import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
@@ -168,7 +169,6 @@ public class UtilHelper {
         return userInfo != null;
     }
 
-    @Nullable
     public static UserInformationModel getLoggedInUser(Context context) {
         String userInfo = PreferenceManager.getDefaultSharedPreferences(context).getString(USER_INFO_KEY, null);
         if (userInfo == null)
@@ -278,5 +278,9 @@ public class UtilHelper {
         location.setLatitude(latitude);
         location.setLongitude(longitude);
         return location;
+    }
+
+    public static String getRandomId(){
+        return "item" + Calendar.getInstance().getTimeInMillis();
     }
 }

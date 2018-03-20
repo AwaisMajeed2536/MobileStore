@@ -43,4 +43,5 @@ public class Constants {
     public static final String DRIVERS_LIST_KEY = "drivers_list_key";
 
     public static final String CALLED_FROM_ADMIN_HOME = "CALLED_FROM_ADMIN_HOME";
+    public static final String LAST_SHOWN_NOTIFICATION_KEY = "LAST_SHOWN_NOTIFICATION_KEY";
 }

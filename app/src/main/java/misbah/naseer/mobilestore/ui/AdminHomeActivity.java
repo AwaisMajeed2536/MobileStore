@@ -132,10 +132,13 @@ public class AdminHomeActivity extends AppCompatActivity implements OnMapReadyCa
             Intent intent = new Intent(this, MessagingActivity.class);
             intent.putExtra(Constants.MESSAGES_PASS_KEY, notificationData);
             startActivity(intent);
+            isNotificationReceived = false;
+            notificationData = null;
         } else if (item.getItemId() == R.id.action_track) {
-            Intent intent = new Intent(this, OrderTrackingActivity.class);
-            intent.putExtra(Constants.CALLED_FROM_ADMIN_HOME, true);
+            Intent intent = new Intent(this, OrderTimesActivity.class);
             startActivity(intent);
+        } else if (item.getItemId() == R.id.action_add_remove_items) {
+            startActivity(new Intent(this, AddRemoveItemsActivity.class));
         } else if (item.getItemId() == R.id.action_sign_out) {
             UtilHelper.endLoginSession(this);
             startActivity(new Intent(this, SplashActivity.class));
@@ -170,6 +173,12 @@ public class AdminHomeActivity extends AppCompatActivity implements OnMapReadyCa
     @Override
     public void onCancelled(DatabaseError databaseError) {
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        onPrepareOptionsMenu(menu);
     }
 
     private boolean isDistributor(UserInformationModel model) {

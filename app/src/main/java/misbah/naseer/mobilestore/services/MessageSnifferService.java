@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import misbah.naseer.mobilestore.helper.Constants;
+import misbah.naseer.mobilestore.helper.UtilHelper;
+import misbah.naseer.mobilestore.model.UserInformationModel;
 
 public class MessageSnifferService extends Service {
     public static final String TAG = "Message Receiver";
@@ -31,8 +33,11 @@ public class MessageSnifferService extends Service {
         intent = new Intent(BROADCAST_ACTION);
         admMessageRef = FirebaseDatabase.getInstance()
                 .getReferenceFromUrl("https://mobilestore-f02a5.firebaseio.com/userMessages/a01");
-        disMessageRef = FirebaseDatabase.getInstance()
-                .getReferenceFromUrl("https://mobilestore-f02a5.firebaseio.com/userMessages/d01");
+        UserInformationModel user = UtilHelper.getLoggedInUser(this);
+        if (user != null && user.getUserType().equalsIgnoreCase(Constants.USER_TYPE_DISTRIBUTOR)) {
+            disMessageRef = FirebaseDatabase.getInstance()
+                    .getReferenceFromUrl("https://mobilestore-f02a5.firebaseio.com/userMessages/" + user.getUserId());
+        }
         setUpNotificationListener();
     }
 
@@ -40,10 +45,10 @@ public class MessageSnifferService extends Service {
         admMessageRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                ArrayList<HashMap<String,String>> messages =
-                        (ArrayList<HashMap<String,String>>) dataSnapshot.getValue();
+                ArrayList<HashMap<String, String>> messages =
+                        (ArrayList<HashMap<String, String>>) dataSnapshot.getValue();
                 int lastMessage = (int) dataSnapshot.getChildrenCount();
-                HashMap<String, String> messageData = messages.get(lastMessage-1);
+                HashMap<String, String> messageData = messages.get(lastMessage - 1);
                 intent.putExtra(Constants.SERVICE_DATA_PASS_KEY, messageData);
                 sendBroadcast(intent);
             }
@@ -53,22 +58,24 @@ public class MessageSnifferService extends Service {
 
             }
         });
-        disMessageRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                ArrayList<HashMap<String,String>> messages =
-                        (ArrayList<HashMap<String,String>>) dataSnapshot.getValue();
-                int lastMessage = (int) dataSnapshot.getChildrenCount();
-                HashMap<String, String> messageData = messages.get(lastMessage-1);
-                intent.putExtra(Constants.SERVICE_DATA_PASS_KEY, messageData);
-                sendBroadcast(intent);
-            }
+        if (disMessageRef != null) {
+            disMessageRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    ArrayList<HashMap<String, String>> messages =
+                            (ArrayList<HashMap<String, String>>) dataSnapshot.getValue();
+                    int lastMessage = (int) dataSnapshot.getChildrenCount();
+                    HashMap<String, String> messageData = messages.get(lastMessage - 1);
+                    intent.putExtra(Constants.SERVICE_DATA_PASS_KEY, messageData);
+                    sendBroadcast(intent);
+                }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
-            }
-        });
+                }
+            });
+        }
     }
 
     @Override

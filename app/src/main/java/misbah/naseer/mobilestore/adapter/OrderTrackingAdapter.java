@@ -46,14 +46,14 @@ public class OrderTrackingAdapter extends BaseAdapter {
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         HashMap<String, String> model = dataList.get(position);
-        if(convertView == null){
+        if (convertView == null) {
             convertView = LayoutInflater.from(context).inflate(R.layout.order_tracking_list_item, parent, false);
         }
         ((TextView) convertView.findViewById(R.id.order_tv)).setText(model.get(Constants.ORDER_TEXT_KEY));
         ImageView receivedIcon = (ImageView) convertView.findViewById(R.id.received_icon);
-        if(model.get(Constants.ORDER_STATUS_KEY).equalsIgnoreCase("pending")){
+        if (model.get(Constants.ORDER_STATUS_KEY).equalsIgnoreCase("pending")) {
             receivedIcon.setVisibility(View.GONE);
-        }else{
+        } else {
             receivedIcon.setVisibility(View.VISIBLE);
         }
         return convertView;
