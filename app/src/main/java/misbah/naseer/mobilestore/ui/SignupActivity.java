@@ -19,8 +19,11 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
 
@@ -66,42 +69,59 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         } else if (view.getId() == R.id.signup_button) {
             if (checkInput()) {
                 UtilHelper.showWaitDialog(this, "Creating Account", "please wait...");
+                final String userId = userInfo.remove(Constants.USER_ID);
                 signUpRefAccountData = FirebaseDatabase.getInstance().getReferenceFromUrl
-                        ("https://mobilestore-f02a5.firebaseio.com/UserAccounts/");
-                signUpRefUserLocations = FirebaseDatabase.getInstance()
-                        .getReferenceFromUrl("https://mobilestore-f02a5.firebaseio.com/userLocations");
-                signUpRefMessages = FirebaseDatabase.getInstance()
-                        .getReferenceFromUrl("https://mobilestore-f02a5.firebaseio.com/userMessages");
-                String userId = userInfo.remove(Constants.USER_ID);
+                        ("https://mobilestore-f02a5.firebaseio.com/UserAccounts/"+userId);
+                signUpRefAccountData.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot == null || dataSnapshot.getValue()==null){
+                            signUpRefAccountData = FirebaseDatabase.getInstance().getReferenceFromUrl
+                                    ("https://mobilestore-f02a5.firebaseio.com/UserAccounts/");
+                            signUpRefUserLocations = FirebaseDatabase.getInstance()
+                                    .getReferenceFromUrl("https://mobilestore-f02a5.firebaseio.com/userLocations");
+                            signUpRefMessages = FirebaseDatabase.getInstance()
+                                    .getReferenceFromUrl("https://mobilestore-f02a5.firebaseio.com/userMessages");
 
-                //setting a node in locations data
-                Location location = UtilHelper.getLastKnownLocation(this);
-                HashMap<String, String> locationRefData = new HashMap<>();
-                locationRefData.put(Constants.LAT_KEY, String.valueOf(location.getLatitude()));
-                locationRefData.put(Constants.LONG_KEY, String.valueOf(location.getLongitude()));
-                signUpRefUserLocations.child(userId).setValue(locationRefData);
+                            //setting a node in locations data
+                            Location location = UtilHelper.getLastKnownLocation(SignupActivity.this);
+                            HashMap<String, String> locationRefData = new HashMap<>();
+                            locationRefData.put(Constants.LAT_KEY, String.valueOf(location.getLatitude()));
+                            locationRefData.put(Constants.LONG_KEY, String.valueOf(location.getLongitude()));
+                            signUpRefUserLocations.child(userId).setValue(locationRefData);
 
-                //setting a node in messages data
-                HashMap<String, String> messagesRefData = new HashMap<>();
-                messagesRefData.put(Constants.MESSAGE_FROM, "nill");
-                messagesRefData.put(Constants.MESSAGE_BODY, "nill");
-                messagesRefData.put(Constants.MESSAGE_LOCATION, "nill");
-                messagesRefData.put(Constants.MESSAGE_DATE, "nill");
-                signUpRefMessages.child(userId).child("0").setValue(messagesRefData);
+                            //setting a node in messages data
+                            HashMap<String, String> messagesRefData = new HashMap<>();
+                            messagesRefData.put(Constants.MESSAGE_FROM, "nill");
+                            messagesRefData.put(Constants.MESSAGE_BODY, "nill");
+                            messagesRefData.put(Constants.MESSAGE_LOCATION, "nill");
+                            messagesRefData.put(Constants.MESSAGE_DATE, "nill");
+                            signUpRefMessages.child(userId).child("0").setValue(messagesRefData);
 
-                //setting user account data
-                signUpRefAccountData.child(userId).setValue(userInfo).addOnCompleteListener(
-                        new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                UtilHelper.dismissWaitDialog();
-                                Toast.makeText(SignupActivity.this, "Signup Successful", Toast.LENGTH_SHORT).show();
-                                moveForward(userInfo.get(Constants.USER_TYPE));
-                                overridePendingTransition(R.anim.hold_activity, R.anim.enter_activity);
-                                finish();
-                            }
+                            //setting user account data
+                            signUpRefAccountData.child(userId).setValue(userInfo).addOnCompleteListener(
+                                    new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            UtilHelper.dismissWaitDialog();
+                                            Toast.makeText(SignupActivity.this, "Signup Successful", Toast.LENGTH_SHORT).show();
+                                            moveForward(userInfo.get(Constants.USER_TYPE));
+                                            overridePendingTransition(R.anim.hold_activity, R.anim.enter_activity);
+                                            finish();
+                                        }
+                                    }
+                            );
+                        }else {
+                            UtilHelper.dismissWaitDialog();
+                            Toast.makeText(SignupActivity.this, "UserId already exist!", Toast.LENGTH_SHORT).show();
                         }
-                );
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
             }
         }
     }
