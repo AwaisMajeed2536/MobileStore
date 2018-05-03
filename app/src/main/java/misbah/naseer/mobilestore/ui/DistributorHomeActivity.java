@@ -46,18 +46,17 @@ import misbah.naseer.mobilestore.R;
 import misbah.naseer.mobilestore.helper.Constants;
 import misbah.naseer.mobilestore.helper.Stopwatch;
 import misbah.naseer.mobilestore.helper.UtilHelper;
+import okhttp3.internal.Util;
 
-public class DistributorHomeActivity extends AppCompatActivity implements OnMapReadyCallback, View.OnClickListener, RoutingListener {
+public class DistributorHomeActivity extends AppCompatActivity implements OnMapReadyCallback, RoutingListener , View.OnClickListener{
 
-    protected Button startButton;
-    protected TextView stopWatchTv;
-    protected Button stopButton;
+    private Button doneBtn;
     HashMap<String, String> receivedMessage;
     GoogleMap googleMap;
     Location driverLocation;
     LatLng storeLatLong;
     private List<Polyline> polylines = new ArrayList<>();
-    private DatabaseReference orderTimesRef;
+    private DatabaseReference orderTrackerRef;
     private int orderTimesCounter = 0;
     private String orderBody = "";
     private static final int[] COLORS = new int[]{R.color.colorPrimaryDark, R.color.colorPrimary, R.color.colorPrimaryLight, R.color.colorAccent, R.color.primary_dark_material_light};
@@ -69,10 +68,11 @@ public class DistributorHomeActivity extends AppCompatActivity implements OnMapR
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        initView();
-        orderTimesRef = FirebaseDatabase.getInstance()
-                .getReferenceFromUrl("https://mobilestore-f02a5.firebaseio.com/orderTimes/s01");
-        orderTimesRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        doneBtn = (Button) findViewById(R.id.done_btn);
+        doneBtn.setOnClickListener(this);
+        orderTrackerRef = FirebaseDatabase.getInstance()
+                .getReferenceFromUrl("https://mobilestore-f02a5.firebaseio.com/orderTracks/");
+        orderTrackerRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 orderTimesCounter = (int) dataSnapshot.getChildrenCount();
@@ -100,6 +100,7 @@ public class DistributorHomeActivity extends AppCompatActivity implements OnMapR
             googleMap.addMarker(new MarkerOptions().position(driverLatLong).title("Store Location")).setIcon(carIcon);
             googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(driverLatLong, 13));
             showEmployeeInterface(Double.valueOf(latLong[0]), Double.valueOf(latLong[1]));
+            doneBtn.setEnabled(true);
         } else {
             driverLocation = UtilHelper.getLastKnownLocation(this);
             LatLng driverLatLong = new LatLng(driverLocation.getLatitude(), driverLocation.getLongitude());
@@ -120,8 +121,6 @@ public class DistributorHomeActivity extends AppCompatActivity implements OnMapR
     }
 
     private void showEmployeeInterface(double latitude, double longitude) {
-        startButton.setEnabled(true);
-        stopButton.setEnabled(true);
         storeLatLong = new LatLng(latitude, longitude);
         BitmapDescriptor storeIcon = BitmapDescriptorFactory.fromResource(R.drawable.ic_store);
         googleMap.addMarker(new MarkerOptions().position(storeLatLong).title("Current Location")).setIcon(storeIcon);
@@ -155,77 +154,6 @@ public class DistributorHomeActivity extends AppCompatActivity implements OnMapR
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onClick(View view) {
-        if (view.getId() == R.id.start_button) {
-            mHandler.sendEmptyMessage(MSG_START_TIMER);
-            startButton.setEnabled(false);
-        } else if (view.getId() == R.id.stop_button) {
-            stopButton.setEnabled(false);
-            mHandler.sendEmptyMessage(MSG_STOP_TIMER);
-            long hours = timer.getElapsedTimeSecs() / 3600;
-            long mins = (timer.getElapsedTimeSecs() / 60) % 60;
-            long secs = timer.getElapsedTimeSecs() % 60;
-            orderTimesRef.child(String.valueOf(orderTimesCounter)).setValue(orderBody + "+" + hours + ":" + mins + ":" + secs);
-            new AlertDialog.Builder(this).setTitle("Time Taken")
-                    .setMessage("You took " + hours + " hours, " + mins + " minutes and "
-                            + secs + " seconds. Please wait for another order, you will receive a notification. Thanks...")
-                    .setPositiveButton("Okay", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            dialogInterface.dismiss();
-                        }
-                    }).show();
-        }
-    }
-
-    private void initView() {
-        startButton = (Button) findViewById(R.id.start_button);
-        startButton.setEnabled(false);
-        startButton.setOnClickListener(DistributorHomeActivity.this);
-        stopWatchTv = (TextView) findViewById(R.id.stop_watch_tv);
-        stopButton = (Button) findViewById(R.id.stop_button);
-        stopButton.setEnabled(false);
-        stopButton.setOnClickListener(DistributorHomeActivity.this);
-    }
-
-    final int MSG_START_TIMER = 0;
-    final int MSG_STOP_TIMER = 1;
-    final int MSG_UPDATE_TIMER = 2;
-    Stopwatch timer = new Stopwatch();
-    final int REFRESH_RATE = 1000;
-
-    @SuppressLint("HandlerLeak")
-    Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            switch (msg.what) {
-                case MSG_START_TIMER:
-                    timer.start(); //start timer
-                    mHandler.sendEmptyMessage(MSG_UPDATE_TIMER);
-                    break;
-                case MSG_UPDATE_TIMER:
-                    long hours = timer.getElapsedTimeSecs() / 3600;
-                    long mins = (timer.getElapsedTimeSecs() / 60) % 60;
-                    long secs = timer.getElapsedTimeSecs() % 60;
-                    stopWatchTv.setText(String.format("%02d", hours) + ":" +
-                            String.format("%02d", mins) + ":" + String.format("%02d", secs));
-                    mHandler.sendEmptyMessageDelayed(MSG_UPDATE_TIMER, REFRESH_RATE); //text view is updated every second,
-                    break;                                  //though the timer is still running
-                case MSG_STOP_TIMER:
-                    mHandler.removeMessages(MSG_UPDATE_TIMER); // no more updates.
-                    timer.stop();//stop timer
-                    hours = timer.getElapsedTimeSecs() / 3600;
-                    mins = (timer.getElapsedTimeSecs() / 60) % 60;
-                    secs = timer.getElapsedTimeSecs() % 60;
-                    stopWatchTv.setText(String.format("%02d", hours) + ":" + String.format("%02d", mins) + ":" + String.format("%02d", secs));
-                    break;
-                default:
-                    break;
-            }
-        }
-    };
 
     @Override
     public void onRoutingFailure(RouteException e) {
@@ -301,5 +229,15 @@ public class DistributorHomeActivity extends AppCompatActivity implements OnMapR
     @Override
     public void onRoutingCancelled() {
 
+    }
+
+    @Override
+    public void onClick(View view) {
+        if (view.getId() == R.id.done_btn){
+            String key = orderTrackerRef.push().getKey();
+            orderTrackerRef.child(key).child("order").setValue(orderBody);
+            orderTrackerRef.child(key).child("byDriver").setValue(UtilHelper.getLoggedInUser(this).getUserId());
+            doneBtn.setEnabled(false);
+        }
     }
 }
